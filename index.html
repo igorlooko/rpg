@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha RPG Pessoal - Sistema de Níveis</title>
-    <meta name="description" content="Ficha RPG pessoal para acompanhamento de desenvolvimento pessoal com sistema de níveis e anotações">
+    <title>Ficha RPG Pessoal - Sistema Completo</title>
+    <meta name="description" content="Ficha RPG pessoal para acompanhamento de desenvolvimento pessoal com sistema de níveis, metas e soft skills">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Reset e configurações gerais */
@@ -661,6 +661,111 @@
             min-height: 80px;
         }
 
+        /* Goals Section */
+        #goals {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .goals-container {
+            margin-bottom: 40px;
+        }
+
+        .goal-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(30, 58, 138, 0.3));
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .goal-card:hover {
+            border-color: rgba(34, 211, 238, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .goal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-cyan);
+        }
+
+        .goal-level {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .goal-description {
+            color: var(--gray-text);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .goal-completed {
+            opacity: 0.7;
+            border-color: var(--success-color);
+        }
+
+        .goal-completed .goal-title {
+            text-decoration: line-through;
+        }
+
+        .add-goal-form {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px dashed var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .add-goal-form:hover {
+            border-color: var(--primary-cyan);
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        .add-goal-form h4 {
+            margin-bottom: 15px;
+            color: var(--primary-cyan);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-input {
+            flex: 1;
+        }
+
+        .level-input-small {
+            width: 80px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--light-text);
+            padding: 8px 10px;
+            text-align: center;
+        }
+
         /* Footer */
         footer {
             background: rgba(15, 23, 42, 0.8);
@@ -862,6 +967,10 @@
             .cards-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .form-row {
+                flex-direction: column;
+            }
         }
 
         @media (max-width: 576px) {
@@ -903,6 +1012,17 @@
                 width: 100%;
                 justify-content: flex-end;
             }
+            
+            .goal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .goal-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
@@ -921,6 +1041,7 @@
                     <li><a href="#hero">Início</a></li>
                     <li><a href="#character-stats">Minha Ficha</a></li>
                     <li><a href="#soft-skills">Soft Skills</a></li>
+                    <li><a href="#goals">Metas</a></li>
                     <li><a href="#about">Sobre</a></li>
                 </ul>
             </nav>
@@ -941,6 +1062,12 @@
                     <div class="hero-buttons">
                         <a href="#character-stats" class="btn btn-primary">Ver Minha Ficha <i class="fas fa-arrow-right"></i></a>
                         <a href="#soft-skills" class="btn btn-secondary">Soft Skills</a>
+                        <button id="exportAllBtn" class="btn btn-secondary">
+                            <i class="fas fa-download"></i> Exportar Tudo
+                        </button>
+                        <button id="importAllBtn" class="btn btn-secondary">
+                            <i class="fas fa-upload"></i> Importar Tudo
+                        </button>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -1015,10 +1142,39 @@
                 <button id="exportSkillsBtn" class="btn btn-secondary">
                     <i class="fas fa-download"></i> Exportar Soft Skills
                 </button>
+                <button id="importSkillsBtn" class="btn btn-secondary">
+                    <i class="fas fa-upload"></i> Importar Soft Skills
+                </button>
             </div>
             
             <div class="blocks-container" id="blocksContainer">
                 <!-- Os blocos de cartas serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Goals Section -->
+    <section id="goals">
+        <div class="container">
+            <div class="section-header">
+                <h2>Metas e Objetivos</h2>
+                <p>Defina metas quantitativas e qualitativas para seu desenvolvimento</p>
+            </div>
+            
+            <div class="controls">
+                <button id="addGoalBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar Meta
+                </button>
+                <button id="exportGoalsBtn" class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Exportar Metas
+                </button>
+                <button id="importGoalsBtn" class="btn btn-secondary">
+                    <i class="fas fa-upload"></i> Importar Metas
+                </button>
+            </div>
+            
+            <div class="goals-container" id="goalsContainer">
+                <!-- As metas serão inseridas aqui via JavaScript -->
             </div>
         </div>
     </section>
@@ -1038,8 +1194,8 @@
                     O nível de cada área é a soma dos níveis das subáreas, e seu nível total é a soma de todas as áreas.
                 </p>
                 <p style="font-size: 1.1rem; color: var(--gray-text); margin-top: 20px;">
-                    Além disso, você pode organizar suas Soft Skills em blocos personalizáveis, com cartas que podem ser viradas para ver a descrição completa.
-                    Todas as informações podem ser exportadas e importadas para backup ou continuar em outro dispositivo.
+                    Além disso, você pode organizar suas Soft Skills em blocos personalizáveis, com cartas que podem ser viradas para ver a descrição completa,
+                    e definir metas quantitativas e qualitativas para seu desenvolvimento. Todas as informações podem ser exportadas e importadas para backup ou continuar em outro dispositivo.
                 </p>
             </div>
         </div>
@@ -1060,6 +1216,7 @@
                         <li><a href="#hero">Início</a></li>
                         <li><a href="#character-stats">Minha Ficha</a></li>
                         <li><a href="#soft-skills">Soft Skills</a></li>
+                        <li><a href="#goals">Metas</a></li>
                         <li><a href="#about">Sobre</a></li>
                     </ul>
                 </div>
@@ -1090,8 +1247,8 @@
     <div id="jsonModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
-            <h3 id="modalTitle">Exportar Ficha</h3>
-            <textarea id="jsonData" class="json-textarea" placeholder="Dados JSON da ficha aparecerão aqui..."></textarea>
+            <h3 id="modalTitle">Exportar Dados</h3>
+            <textarea id="jsonData" class="json-textarea" placeholder="Dados JSON aparecerão aqui..."></textarea>
             <div class="controls">
                 <button id="copyBtn" class="btn btn-primary">
                     <i class="fas fa-copy"></i> Copiar
@@ -1314,6 +1471,26 @@
             ]
         };
 
+        // Dados iniciais das Metas
+        let goalsData = {
+            goals: [
+                {
+                    id: "goal-1",
+                    title: "Conseguir um Emprego",
+                    description: "Conseguir uma posição na área de desenvolvimento web com salário competitivo",
+                    level: 10,
+                    completed: false
+                },
+                {
+                    id: "goal-2",
+                    title: "Aprender Inglês Avançado",
+                    description: "Alcançar fluência no idioma inglês para comunicação profissional",
+                    level: 8,
+                    completed: false
+                }
+            ]
+        };
+
         // Menu Mobile Toggle
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const navLinks = document.getElementById('navLinks');
@@ -1361,6 +1538,13 @@
         const blocksContainer = document.getElementById('blocksContainer');
         const addBlockBtn = document.getElementById('addBlockBtn');
         const exportSkillsBtn = document.getElementById('exportSkillsBtn');
+        const importSkillsBtn = document.getElementById('importSkillsBtn');
+        const goalsContainer = document.getElementById('goalsContainer');
+        const addGoalBtn = document.getElementById('addGoalBtn');
+        const exportGoalsBtn = document.getElementById('exportGoalsBtn');
+        const importGoalsBtn = document.getElementById('importGoalsBtn');
+        const exportAllBtn = document.getElementById('exportAllBtn');
+        const importAllBtn = document.getElementById('importAllBtn');
 
         // Carregar dados salvos do localStorage
         function loadSavedData() {
@@ -1373,12 +1557,18 @@
             if (savedSkills) {
                 softSkillsData = JSON.parse(savedSkills);
             }
+            
+            const savedGoals = localStorage.getItem('goalsData');
+            if (savedGoals) {
+                goalsData = JSON.parse(savedGoals);
+            }
         }
 
         // Salvar dados no localStorage
         function saveData() {
             localStorage.setItem('characterData', JSON.stringify(characterData));
             localStorage.setItem('softSkillsData', JSON.stringify(softSkillsData));
+            localStorage.setItem('goalsData', JSON.stringify(goalsData));
         }
 
         // Calcular níveis
@@ -1814,6 +2004,145 @@
             });
         }
 
+        // Gerar metas
+        function generateGoals() {
+            goalsContainer.innerHTML = '';
+            
+            // Formulário para adicionar nova meta
+            const addGoalForm = document.createElement('div');
+            addGoalForm.className = 'add-goal-form';
+            addGoalForm.innerHTML = `
+                <h4>Adicionar Nova Meta</h4>
+                <div class="form-row">
+                    <input type="text" class="form-input" id="goalTitleInput" placeholder="Título da Meta">
+                    <input type="number" class="level-input-small" id="goalLevelInput" placeholder="Nível" min="1" max="100">
+                </div>
+                <textarea class="form-textarea" id="goalDescInput" placeholder="Descrição da Meta"></textarea>
+                <button class="btn btn-primary" id="saveGoalBtn">Salvar Meta</button>
+            `;
+            goalsContainer.appendChild(addGoalForm);
+            
+            // Lista de metas
+            goalsData.goals.forEach(goal => {
+                const goalCard = document.createElement('div');
+                goalCard.className = `goal-card ${goal.completed ? 'goal-completed' : ''}`;
+                goalCard.setAttribute('data-id', goal.id);
+                
+                goalCard.innerHTML = `
+                    <div class="goal-header">
+                        <div class="goal-title">${goal.title}</div>
+                        <div class="goal-level">+${goal.level} níveis</div>
+                    </div>
+                    <div class="goal-description">${goal.description}</div>
+                    <div class="goal-actions">
+                        <button class="btn btn-sm ${goal.completed ? 'btn-secondary' : 'btn-primary'} toggle-goal" data-goal="${goal.id}">
+                            <i class="fas fa-${goal.completed ? 'undo' : 'check'}"></i> ${goal.completed ? 'Reabrir' : 'Concluir'}
+                        </button>
+                        <button class="btn btn-sm btn-secondary edit-goal" data-goal="${goal.id}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn btn-sm btn-secondary delete-goal" data-goal="${goal.id}">
+                            <i class="fas fa-trash"></i> Remover
+                        </button>
+                    </div>
+                `;
+                
+                goalsContainer.appendChild(goalCard);
+            });
+            
+            // Adicionar event listeners para metas
+            addGoalsEventListeners();
+        }
+
+        // Adicionar event listeners para metas
+        function addGoalsEventListeners() {
+            // Salvar nova meta
+            document.getElementById('saveGoalBtn').addEventListener('click', () => {
+                const title = document.getElementById('goalTitleInput').value.trim();
+                const description = document.getElementById('goalDescInput').value.trim();
+                const level = parseInt(document.getElementById('goalLevelInput').value) || 0;
+                
+                if (title && description && level > 0) {
+                    const newGoal = {
+                        id: `goal-${Date.now()}`,
+                        title: title,
+                        description: description,
+                        level: level,
+                        completed: false
+                    };
+                    
+                    goalsData.goals.push(newGoal);
+                    
+                    document.getElementById('goalTitleInput').value = '';
+                    document.getElementById('goalDescInput').value = '';
+                    document.getElementById('goalLevelInput').value = '';
+                    
+                    generateGoals();
+                    saveData();
+                }
+            });
+            
+            // Concluir/Reabrir meta
+            document.querySelectorAll('.toggle-goal').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const goalId = e.target.closest('.toggle-goal').getAttribute('data-goal');
+                    
+                    goalsData.goals.forEach(goal => {
+                        if (goal.id === goalId) {
+                            goal.completed = !goal.completed;
+                        }
+                    });
+                    
+                    generateGoals();
+                    saveData();
+                });
+            });
+            
+            // Editar meta
+            document.querySelectorAll('.edit-goal').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const goalId = e.target.closest('.edit-goal').getAttribute('data-goal');
+                    
+                    let goalToEdit = null;
+                    goalsData.goals.forEach(goal => {
+                        if (goal.id === goalId) {
+                            goalToEdit = goal;
+                        }
+                    });
+                    
+                    if (goalToEdit) {
+                        const newTitle = prompt("Editar título da meta:", goalToEdit.title);
+                        if (newTitle !== null) {
+                            const newDescription = prompt("Editar descrição:", goalToEdit.description);
+                            if (newDescription !== null) {
+                                const newLevel = prompt("Editar nível:", goalToEdit.level);
+                                if (newLevel !== null) {
+                                    goalToEdit.title = newTitle;
+                                    goalToEdit.description = newDescription;
+                                    goalToEdit.level = parseInt(newLevel) || goalToEdit.level;
+                                    generateGoals();
+                                    saveData();
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Deletar meta
+            document.querySelectorAll('.delete-goal').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const goalId = e.target.closest('.delete-goal').getAttribute('data-goal');
+                    
+                    if (confirm("Tem certeza que deseja excluir esta meta?")) {
+                        goalsData.goals = goalsData.goals.filter(goal => goal.id !== goalId);
+                        generateGoals();
+                        saveData();
+                    }
+                });
+            });
+        }
+
         // Adicionar novo bloco
         addBlockBtn.addEventListener('click', () => {
             const blockTitle = prompt("Digite o título do novo bloco:");
@@ -1830,6 +2159,26 @@
             }
         });
 
+        // Exportar/Importar Tudo
+        exportAllBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Exportar Todos os Dados';
+            const allData = {
+                characterData: characterData,
+                softSkillsData: softSkillsData,
+                goalsData: goalsData
+            };
+            jsonData.value = JSON.stringify(allData, null, 2);
+            jsonModal.style.display = 'block';
+            saveBtn.style.display = 'none';
+        });
+
+        importAllBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Importar Todos os Dados';
+            jsonData.value = '';
+            jsonModal.style.display = 'block';
+            saveBtn.style.display = 'inline-flex';
+        });
+
         // Exportar Soft Skills
         exportSkillsBtn.addEventListener('click', () => {
             modalTitle.textContent = 'Exportar Soft Skills';
@@ -1838,7 +2187,31 @@
             saveBtn.style.display = 'none';
         });
 
-        // Exportar dados
+        // Importar Soft Skills
+        importSkillsBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Importar Soft Skills';
+            jsonData.value = '';
+            jsonModal.style.display = 'block';
+            saveBtn.style.display = 'inline-flex';
+        });
+
+        // Exportar Metas
+        exportGoalsBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Exportar Metas';
+            jsonData.value = JSON.stringify(goalsData, null, 2);
+            jsonModal.style.display = 'block';
+            saveBtn.style.display = 'none';
+        });
+
+        // Importar Metas
+        importGoalsBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Importar Metas';
+            jsonData.value = '';
+            jsonModal.style.display = 'block';
+            saveBtn.style.display = 'inline-flex';
+        });
+
+        // Exportar dados da ficha
         exportBtn.addEventListener('click', () => {
             modalTitle.textContent = 'Exportar Ficha';
             jsonData.value = JSON.stringify(characterData, null, 2);
@@ -1846,7 +2219,7 @@
             saveBtn.style.display = 'none';
         });
 
-        // Importar dados
+        // Importar dados da ficha
         importBtn.addEventListener('click', () => {
             modalTitle.textContent = 'Importar Ficha';
             jsonData.value = '';
@@ -1877,12 +2250,24 @@
                 if (modalTitle.textContent === 'Importar Ficha') {
                     characterData = importedData;
                     generateAreas();
-                } else {
+                } else if (modalTitle.textContent === 'Importar Soft Skills') {
                     softSkillsData = importedData;
                     generateSoftSkills();
+                } else if (modalTitle.textContent === 'Importar Metas') {
+                    goalsData = importedData;
+                    generateGoals();
+                } else if (modalTitle.textContent === 'Importar Todos os Dados') {
+                    if (importedData.characterData) characterData = importedData.characterData;
+                    if (importedData.softSkillsData) softSkillsData = importedData.softSkillsData;
+                    if (importedData.goalsData) goalsData = importedData.goalsData;
+                    
+                    generateAreas();
+                    generateSoftSkills();
+                    generateGoals();
                 }
                 
                 jsonModal.style.display = 'none';
+                saveData();
             } catch (e) {
                 alert('Erro ao importar dados. Verifique se o JSON é válido.');
             }
@@ -1899,6 +2284,7 @@
         loadSavedData();
         generateAreas();
         generateSoftSkills();
+        generateGoals();
         
         // Smooth scrolling para links âncora
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
